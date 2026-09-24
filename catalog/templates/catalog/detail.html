@@ -1,0 +1,86 @@
+{% extends "catalog/base.html" %}
+{% load static %}
+
+{% block title %}Item {{ product.number|stringformat:"02d" }} — {{ business.company_name }}{% endblock %}
+
+{% block content %}
+<div class="page active" id="page-detail">
+
+  <div class="back-bar">
+    <div class="wrap">
+      <a class="back-link" href="{% url 'catalog:index' %}">&larr; Back to Catalog</a>
+    </div>
+  </div>
+
+  <main class="detail">
+    <div class="wrap">
+      <div class="detail__grid">
+
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image-placeholder" style="object-fit:cover;">
+        {% else %}
+          <div class="product-image-placeholder">
+            <span>Product Image</span>
+          </div>
+        {% endif %}
+
+        <div>
+          <span class="product-eyebrow">Item {{ product.number|stringformat:"02d" }}</span>
+          <h1 class="product-name">{{ product.name }}</h1>
+
+          <div class="price-box">
+            <p class="price-box__label">Price</p>
+            <p class="price-box__value">&#8377; {{ product.display_price }}</p>
+          </div>
+
+          <div class="product-section">
+            <p class="product-section__title">Description</p>
+            <p class="product-description">{{ product.description|default:"Product description placeholder." }}</p>
+          </div>
+
+          {% if product.specs.all %}
+          <div class="product-section">
+            <p class="product-section__title">Specifications</p>
+            <ul class="specs-list">
+              {% for spec in product.specs.all %}
+              <li><span>{{ spec.label }}</span><span>{{ spec.value }}</span></li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          <div class="product-section">
+            <p class="product-section__title">Availability</p>
+            <span class="availability-badge {% if product.in_stock %}availability-badge--in{% else %}availability-badge--out{% endif %}">
+              {% if product.in_stock %}In Stock{% else %}Out of Stock{% endif %}
+            </span>
+          </div>
+
+          <div class="btn-row">
+            <a class="btn btn--call" href="tel:{{ business.phone }}">Call Now</a>
+            <a class="btn btn--whatsapp" href="https://wa.me/{{ business.whatsapp_number }}" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn btn--back" href="{% url 'catalog:index' %}">Back to Catalog</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="detail-nav">
+        {% if previous_product %}
+          <a href="{% url 'catalog:product_detail' previous_product.number %}">&larr; Item {{ previous_product.number|stringformat:"02d" }}</a>
+        {% else %}
+          <a href="{% url 'catalog:index' %}">&larr; Catalog</a>
+        {% endif %}
+        {% if next_product %}
+          <a href="{% url 'catalog:product_detail' next_product.number %}">Item {{ next_product.number|stringformat:"02d" }} &rarr;</a>
+        {% else %}
+          <a href="{% url 'catalog:index' %}">Catalog &rarr;</a>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
+  {% include "catalog/_footer.html" %}
+
+</div>
+{% endblock %}

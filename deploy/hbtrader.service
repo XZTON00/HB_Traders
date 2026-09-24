@@ -1,0 +1,47 @@
+# /etc/systemd/system/hbtrader.service
+#
+# Install:
+#   sudo cp deploy/hbtrader.service /etc/systemd/system/hbtrader.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now hbtrader
+#
+# This unit is what gives you "automatic restart": systemd starts Gunicorn
+# on boot, and Restart=on-failure brings it back up if the process crashes.
+
+[Unit]
+Description=Gunicorn daemon for H.B. Trader's (hbtraders.com)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=hbtrader
+Group=www-data
+
+WorkingDirectory=/home/hbtrader/hbtrader
+EnvironmentFile=/home/hbtrader/hbtrader/.env
+
+RuntimeDirectory=hbtrader
+RuntimeDirectoryMode=0775
+
+ExecStart=/home/hbtrader/hbtrader/venv/bin/gunicorn \
+    -c /home/hbtrader/hbtrader/deploy/gunicorn.conf.py \
+    hbtrader.wsgi:application
+
+ExecReload=/bin/kill -s HUP $MAINPID
+
+# --- Automatic restart ---
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+# --- Hardening (optional but recommended) ---
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/hbtrader/hbtrader /run/hbtrader /var/log/hbtrader
+
+[Install]
+WantedBy=multi-user.target

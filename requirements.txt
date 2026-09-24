@@ -1,0 +1,5 @@
+# Core — needed for local development AND production
+Django==6.1
+pillow==12.1.1
+python-decouple==3.8
+whitenoise==6.12.0

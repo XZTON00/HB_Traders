@@ -1,0 +1,27 @@
+{% extends "catalog/base.html" %}
+{% block title %}Sign Up — {{ business.company_name }}{% endblock %}
+{% block content %}
+<div class="page active">
+  <div class="back-bar"><div class="wrap"><a class="back-link" href="{% url 'catalog:index' %}">&larr; Back to Catalog</a></div></div>
+  <main class="detail">
+    <div class="wrap auth-wrap">
+      <span class="product-eyebrow">Create Account</span>
+      <h1 class="product-name" style="font-size:clamp(30px,5vw,48px);">Join Us</h1>
+      {% if form.non_field_errors %}<p class="auth-form__errors">{{ form.non_field_errors.0 }}</p>{% endif %}
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div>
+          <label class="auth-form__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<p class="auth-form__field-error">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn--call" style="align-self:flex-start;">Create Account</button>
+      </form>
+      <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </div>
+  </main>
+  {% include "catalog/_footer.html" %}
+</div>
+{% endblock %}

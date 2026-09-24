@@ -1,0 +1,5 @@
+# Production extras — install on the VPS with:
+#   pip install -r requirements-prod.txt
+-r requirements.txt
+gunicorn==26.2.0
+psycopg2-binary==2.9.12
